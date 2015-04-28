@@ -26,8 +26,9 @@ def request_topcoder_relpath(relpath):
             mean=2.; N=10; max_duration=5
             duration = random.gammavariate(N, mean/N)
             duration = min(duration, max_duration)
+            duration = max(duration, interval)
             time.sleep(duration)
-            LAST_REQUEST_TIME = time.time()
+        LAST_REQUEST_TIME = time.time()
         return
 
     ensure_interval()
