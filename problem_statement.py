@@ -92,6 +92,7 @@ def extract_problem_examples(etree):
         pieces = pieces[:returns_index + 1]
         pieces = map(do_replace, pieces)
         pieces = map(eval, pieces)
+        pieces = list(pieces)
         pieces = (pieces[:-1], pieces[-1])
         return pieces
 
@@ -139,7 +140,7 @@ if __name__ == '__main__':
 """.format
 def get_python_text(etree):
     problem_statement = extract_problem_statement(etree).encode('utf-8')
-    problem_statement = ''.join([x for x in problem_statement if ord(x) < 128])
+    problem_statement = ''.join(chr(x) for x in problem_statement if x < 128)
     problem_definition = extract_problem_definition(etree)
     examples = extract_problem_examples(etree)
     text = PYTHON_TEXT_FORMATTER(problem_statement, problem_definition['class'],

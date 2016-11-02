@@ -33,7 +33,7 @@ def request_topcoder_relpath(relpath):
 
     ensure_interval()
     url = BASE_URL + relpath
-    print 'requesting {0} at {1}'.format(url, datetime.datetime.now())
+    print('requesting {0} at {1}'.format(url, datetime.datetime.now()))
     response = requests.get(url)
     assert response.status_code == 200
     return response.text
