@@ -129,14 +129,32 @@ class {1}(object):
 
 
 if __name__ == '__main__':
-    input_outputs = [
+    inputs_expecteds = [
         {6}
     ]
-    for (input, expected_output) in input_outputs:
+    any_wrong = False
+    as_expected = []
+    for (input, expected) in inputs_expecteds:
         output = {1}.{5}(*input)
-        # FIXME: add check on correctness, only print expected if incorrect
-        print '{1}.{5}({{0}}) = {{1}} (expected {{2}})'.format(input, output, expected_output)
-        print
+        if output != expected:
+            if not any_wrong:
+                any_wrong = True
+                print('Results not as expected:')
+            print('\t{1}.{5}({{0}}) = {{1}} (expected {{2}})'
+                  .format(input, output, expected))
+            print()
+        else:
+            as_expected.append((input, expected))
+    if as_expected:
+        if any_wrong:
+            print('Results as expected:')
+        else:
+            print('All results as expected:')
+        for (input, expected) in as_expected:
+            print('\t{1}.{5}({{0}}) = {{1}}'
+                  .format(input, expected))
+    else:
+        print('*NO* results as expected')
 """.format
 def get_python_text(etree):
     problem_statement = extract_problem_statement(etree).encode('utf-8')
