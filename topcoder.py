@@ -26,13 +26,14 @@ def request_topcoder_relpath(relpath):
             mean=2.; N=10; max_duration=5
             duration = random.gammavariate(N, mean/N)
             duration = min(duration, max_duration)
+            duration = max(duration, interval)
             time.sleep(duration)
-            LAST_REQUEST_TIME = time.time()
+        LAST_REQUEST_TIME = time.time()
         return
 
     ensure_interval()
     url = BASE_URL + relpath
-    print 'requesting {0} at {1}'.format(url, datetime.datetime.now())
+    print('requesting {0} at {1}'.format(url, datetime.datetime.now()))
     response = requests.get(url)
     assert response.status_code == 200
     return response.text
@@ -133,10 +134,11 @@ def get_overview_relpath_lookup(overview_etree=None):
     return overview_relpath_lookup
 
 
-DIRNAME = './scripts'
 def write_problem_statement(overview_relpath_lookup,
                             match_number, divisions, levels,
-                            dirname=DIRNAME):
+                            dirname):
+    match_number = match_number or sorted(overview_relpath_lookup)[-1]
+    dirname = dirname or './scripts/{}'.format(match_number)
     overview_relpath = overview_relpath_lookup[match_number]
     overview_etree = read_topcoder_relpath(overview_relpath)
     problem_statement_lookup = read_problem_statement_lookup(overview_etree)
@@ -153,10 +155,10 @@ def write_problem_statement(overview_relpath_lookup,
 
 def parse_args(override=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('match_number', type=int)
+    parser.add_argument('--match_number', type=int, default=None)
     parser.add_argument('--divisions', nargs='+', type=int)
     parser.add_argument('--levels', nargs='+', type=int)
-    parser.add_argument('--dirname', type=str, default=DIRNAME)
+    parser.add_argument('--dirname', type=str, default=None)
     args = parser.parse_args(override)
     #
     args.divisions = args.divisions or range(1, 3)

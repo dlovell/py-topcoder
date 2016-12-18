@@ -92,6 +92,7 @@ def extract_problem_examples(etree):
         pieces = pieces[:returns_index + 1]
         pieces = map(do_replace, pieces)
         pieces = map(eval, pieces)
+        pieces = list(pieces)
         pieces = (pieces[:-1], pieces[-1])
         return pieces
 
@@ -128,18 +129,36 @@ class {1}(object):
 
 
 if __name__ == '__main__':
-    input_outputs = [
+    inputs_expecteds = [
         {6}
     ]
-    for (input, expected_output) in input_outputs:
+    any_wrong = False
+    as_expected = []
+    for (input, expected) in inputs_expecteds:
         output = {1}.{5}(*input)
-        # FIXME: add check on correctness, only print expected if incorrect
-        print '{1}.{5}({{0}}) = {{1}} (expected {{2}})'.format(input, output, expected_output)
-        print
+        if output != expected:
+            if not any_wrong:
+                any_wrong = True
+                print('Results not as expected:')
+            print('\t{1}.{5}({{0}}) = {{1}} (expected {{2}})'
+                  .format(input, output, expected))
+            print()
+        else:
+            as_expected.append((input, expected))
+    if as_expected:
+        if any_wrong:
+            print('Results as expected:')
+        else:
+            print('All results as expected:')
+        for (input, expected) in as_expected:
+            print('\t{1}.{5}({{0}}) = {{1}}'
+                  .format(input, expected))
+    else:
+        print('*NO* results as expected')
 """.format
 def get_python_text(etree):
     problem_statement = extract_problem_statement(etree).encode('utf-8')
-    problem_statement = ''.join([x for x in problem_statement if ord(x) < 128])
+    problem_statement = ''.join(chr(x) for x in problem_statement if x < 128)
     problem_definition = extract_problem_definition(etree)
     examples = extract_problem_examples(etree)
     text = PYTHON_TEXT_FORMATTER(problem_statement, problem_definition['class'],
