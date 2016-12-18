@@ -137,6 +137,8 @@ def get_overview_relpath_lookup(overview_etree=None):
 def write_problem_statement(overview_relpath_lookup,
                             match_number, divisions, levels,
                             dirname):
+    match_number = match_number or sorted(overview_relpath_lookup)[-1]
+    dirname = dirname or './scripts/{}'.format(match_number)
     overview_relpath = overview_relpath_lookup[match_number]
     overview_etree = read_topcoder_relpath(overview_relpath)
     problem_statement_lookup = read_problem_statement_lookup(overview_etree)
@@ -153,7 +155,7 @@ def write_problem_statement(overview_relpath_lookup,
 
 def parse_args(override=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('match_number', type=int)
+    parser.add_argument('--match_number', type=int, default=None)
     parser.add_argument('--divisions', nargs='+', type=int)
     parser.add_argument('--levels', nargs='+', type=int)
     parser.add_argument('--dirname', type=str, default=None)
@@ -161,7 +163,6 @@ def parse_args(override=None):
     #
     args.divisions = args.divisions or range(1, 3)
     args.levels = args.levels or range(1, 4)
-    args.dirname = args.dirname or './scripts/{}'.format(args.match_number)
     #
     return args
 
